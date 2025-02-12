@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  comfy-ui:
+    container_name: comfy-ui
+    image: ubuntu:latest
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - "$HOME/ComfyUI/output:/comfy-ui/ComfyUI/output"
+      - "$HOME/ComfyUI/models:/comfy-ui/ComfyUI/models"
+    ports:
+      - 8188:8188
+    working_dir: /comfy-ui
+    command: /bin/bash -c "cd /comfy-ui && ./run_gpu.sh"
+    build:
+      context: .
+      dockerfile: Dockerfile
+volumes:
+  comfy-ui-data:
+    driver: local
